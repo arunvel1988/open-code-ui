@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OpenCode — Workspace</title><link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">O</span><span>OpenCode <small>WORKSPACE</small></span></a>
+    <div class="top-actions"><span id="status" class="status">Checking connection…</span><form action="/logout" method="post"><button class="text-button">Sign out</button></form></div>
+  </header>
+
+  <main class="shell">
+    <section class="intro">
+      <div><div class="eyebrow">YOUR CODING ASSISTANT</div><h1>Start building.</h1><p>Get OpenCode running, connect a model, choose your project, and start coding.</p></div>
+      <div class="intro-actions"><button class="button primary" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">Open workspace <span>→</span></button></div>
+    </section>
+
+    <section class="setup-grid" aria-label="Quick setup">
+      <article class="card setup-card">
+        <div class="step">01 <span>ENGINE</span></div><h2>OpenCode</h2>
+        <p class="muted">Install once. The dashboard starts it automatically when available.</p>
+        <div class="state-row"><span>Installation</span><strong id="installState">Checking…</strong></div>
+        <div class="state-row"><span>Server</span><strong id="engineRunState">Checking…</strong></div>
+        <div class="button-row"><button class="button primary" id="installBtn" onclick="installOpenCode()">Install</button><button class="button secondary" onclick="startOpenCode()">Start</button><button class="button subtle" onclick="stopOpenCode()">Stop</button></div>
+        <p id="engineDetail" class="feedback">OpenCode starts automatically when installed.</p>
+      </article>
+
+      <article class="card setup-card">
+        <div class="step">02 <span>PROVIDER</span></div><h2>Connect a model</h2>
+        <p class="muted">Add an API key for the provider you want to use.</p>
+        <label for="providerId">Provider</label><select id="providerId"><option value="groq">Groq</option><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="google">Google</option><option value="openrouter">OpenRouter</option></select>
+        <label for="providerKey">API key</label><input id="providerKey" type="password" placeholder="Paste API key" autocomplete="off">
+        <button class="button primary full" onclick="connectProvider()">Save provider key</button>
+        <p id="providerMsg" class="feedback">Big Pickle is the default free OpenCode model; no separate provider key is needed for it.</p>
+        <label for="defaultModel">Default model ID</label><input id="defaultModel" value="opencode/big-pickle" placeholder="opencode/big-pickle">
+        <button class="button secondary full" onclick="saveModel()">Save default model</button>
+        <p id="modelMsg" class="feedback">Default: opencode/big-pickle (Big Pickle). Use provider/model format for another model.</p>
+      </article>
+
+      <article class="card setup-card">
+        <div class="step">03 <span>PROJECT</span></div><h2>Choose your project</h2>
+        <p class="muted">OpenCode works inside the selected project folder.</p>
+        <div class="project-path" id="project">/workspace</div>
+        <label for="projectdir">Container project path</label><input id="projectdir" placeholder="/workspace">
+        <label for="ocurl">OpenCode server URL</label><input id="ocurl" value="http://127.0.0.1:4096">
+        <button class="button secondary full" onclick="save(false)">Save project settings</button>
+        <p id="settingsmsg" class="feedback">Default project is /workspace.</p>
+      </article>
+    </section>
+
+    <section id="studio" class="workspace-section">
+      <div class="section-heading"><div><div class="eyebrow">04 / WORKSPACE</div><h2>Chat with OpenCode</h2><p class="muted">Describe what you want to build, fix, or understand. Only the final user-facing answer is shown.</p></div><button class="button secondary" onclick="newSession()">＋ New session</button></div>
+      <div class="card workspace">
+        <div class="workspace-bar"><div><span class="live-dot"></span><strong>AI coding session</strong><span id="sid" class="session-id">No session yet</span></div><span id="server" class="server-pill">Checking</span></div>
+        <div id="chat" class="chat"><div class="welcome"><div class="welcome-icon">O</div><h3>What are we building today?</h3><p>Try: “Inspect this project and explain how it works.”</p></div></div>
+        <div class="composer"><textarea id="prompt" placeholder="Ask OpenCode to build, debug, explain, or refactor…" rows="2"></textarea><button class="button primary send-button" onclick="send()">Send <span>↑</span></button></div>
+        <div class="composer-note">Enter to send · Shift + Enter for a new line</div>
+      </div>
+    </section>
+
+    <section class="lower-grid">
+      <article class="card compact-card">
+        <div class="section-heading small-heading"><div><div class="eyebrow">PROJECT</div><h2>Files</h2></div><button class="text-button" onclick="loadFiles()">Refresh</button></div>
+        <div class="project-root" id="root">Workspace</div><div id="filelist" class="list">Loading files…</div>
+      </article>
+      <article class="card compact-card">
+        <div class="section-heading small-heading"><div><div class="eyebrow">HISTORY</div><h2>Recent sessions</h2></div><button class="text-button" onclick="loadSessions()">Refresh</button></div>
+        <div id="sessionlist" class="list">Loading sessions…</div>
+      </article>
+    </section>
+
+    <details class="card advanced">
+      <summary>Advanced tools <span>GitHub · Models · Server logs</span></summary>
+      <div class="advanced-content">
+        <div class="advanced-grid">
+          <div><h3>GitHub connection</h3><label for="ghuser">GitHub username</label><input id="ghuser" placeholder="username"><label for="ghtoken">Personal access token</label><input id="ghtoken" type="password" placeholder="GitHub token"><button class="button secondary full" onclick="save(true)">Save & test GitHub</button><p id="ghmsg" class="feedback"></p><label for="repo">New repository name</label><input id="repo" placeholder="my-project"><label for="private">Visibility</label><select id="private"><option value="true">Private</option><option value="false">Public</option></select><button class="button secondary full" onclick="createRepo()">Create repository</button><button class="button subtle full" onclick="repos()">List repositories</button><div id="repos"></div></div>
+          <div><h3>Commit & push</h3><label for="commit">Commit message</label><input id="commit" value="Update from OpenCode Workspace"><button class="button primary full" onclick="push()">Commit & push</button><p id="gitmsg" class="feedback">Requires a Git repository with an origin remote and working Git authentication.</p><h3 class="subhead">Configured models</h3><button class="button subtle" onclick="loadModels()">Refresh models</button><div id="modellist" class="list">Model information appears here.</div><h3 class="subhead">Server logs</h3><button class="button subtle" onclick="loadLogs()">Load logs</button><pre id="logs" class="log-view">No logs loaded.</pre></div>
+        </div>
+      </div>
+    </details>
+    <footer>OpenCode Workspace <span>Self-hosted · Local-first</span></footer>
+  </main>
+  <script src="/static/app.js"></script>
+  <script>
+    async function loadLogs(){try{const d=await api('/api/manager/logs');document.getElementById('logs').textContent=d.logs||'No logs.'}catch(e){document.getElementById('logs').textContent=e.message}}
+  </script>
+</body></html>
