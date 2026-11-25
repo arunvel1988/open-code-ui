@@ -1,1 +1,21 @@
-#######
+###############################################################################
+
+curl -fsSL https://opencode.ai/install | bash
+
+opencode --version
+
+export PATH="$HOME/.opencode/bin:$PATH"
+
+opencode
+
+/connect
+
+/models
+
+openai/gpt-oss-120b
+
+opencode
+
+############################################################################
+
+
