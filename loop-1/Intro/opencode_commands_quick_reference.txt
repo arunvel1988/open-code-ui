@@ -1,0 +1,114 @@
+OPENCODE COMMANDS - QUICK REFERENCE
+=====================================
+
+Note:
+Type / inside OpenCode to see the commands available in your installed version.
+Commands and shortcuts can vary by version, installed plugins, and project configuration.
+
+1. SLASH COMMANDS
+-----------------
+
+/help       Show help and available commands.
+/compact    Summarize older conversation context and free up context space.
+/summarize  Alias for /compact in versions that support it.
+/new        Start a fresh session.
+/sessions   List and resume previous sessions.
+/undo       Undo the last interaction and associated file changes.
+/redo       Restore the undone interaction.
+/models     Change the AI model.
+/agents     Switch between available agents.
+/connect    Configure an AI provider, such as Groq.
+/init       Create or update project instructions in AGENTS.md.
+/details    Toggle tool execution details.
+/editor     Open your external editor to compose a prompt.
+/export     Export the conversation.
+/themes     Change the terminal theme.
+/thinking   Toggle visibility of thinking blocks, where supported.
+/btw        Ask a side question without adding it to the main conversation.
+/highlights View release highlights.
+/exit       Exit OpenCode.
+
+2. USEFUL EXAMPLES
+------------------
+
+Ask a side question:
+/btw Why are we using Redis in this project?
+
+Initialize project instructions:
+/init
+
+Compact a long session:
+/compact
+
+Check available models:
+/models
+
+Configure Groq:
+/connect
+
+Undo or redo:
+/undo
+/redo
+
+Start a new session:
+/new
+
+Resume an older session:
+/sessions
+
+3. FILE REFERENCES AND SHELL COMMANDS
+--------------------------------------
+
+Reference a file in your prompt:
+@docker-compose.yml
+
+Reference a section of a file (syntax may vary by version):
+@src/app.py#20-80
+
+Run a shell command from the prompt:
+!docker ps
+
+Check Git status:
+!git status
+
+4. KEYBOARD SHORTCUTS
+---------------------
+
+These are common shortcuts; they may vary by terminal and OpenCode version.
+
+Ctrl + P             Open command palette.
+Ctrl + X, then N     New session.
+Ctrl + X, then L     List sessions.
+Ctrl + X, then M     Select model.
+Ctrl + X, then A     Select agent.
+Ctrl + X, then C     Compact session.
+Ctrl + X, then U     Undo.
+Ctrl + X, then R     Redo.
+Esc                  Interrupt current operation.
+Shift + Tab          Switch agents.
+Ctrl + J             Insert a new line in the prompt.
+
+5. RECOMMENDED COMMANDS TO LEARN FIRST
+--------------------------------------
+
+/compact
+/init
+/btw
+/undo
+/sessions
+/models
+/connect
+
+Tip:
+Type / in the OpenCode prompt to inspect commands supported by your installed version.
+For exact shortcuts, check the TUI keybindings/help in your installed version.
+
+SAFETY TIP
+----------
+Before experimenting with code changes, save a Git checkpoint:
+
+    git status
+    git add .
+    git commit -m "Save working state before OpenCode changes"
+
+Undo/snapshot behavior can depend on Git and OpenCode configuration.
